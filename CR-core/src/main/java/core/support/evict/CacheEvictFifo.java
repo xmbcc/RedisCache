@@ -26,6 +26,7 @@ public class CacheEvictFifo<K,V> extends AbstractCacheEvict<K,V> {
         // 超过限制，执行移除
         if(cache.size() >= context.size()) {
             K evictKey = queue.remove();
+
             // 移除最开始的元素
             V evictValue = cache.remove(evictKey);
             result = new CacheEntry<>(evictKey, evictValue);

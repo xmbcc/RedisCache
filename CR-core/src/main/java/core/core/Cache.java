@@ -2,6 +2,7 @@ package core.core;
 
 import annotation.CacheInterceptor;
 import api.*;
+import core.KV.Values.*;
 import core.constant.enums.CacheRemoveType;
 import core.core.exception.CacheRuntimeException;
 import core.support.evict.CacheEvictContext;
@@ -20,9 +21,14 @@ import java.util.*;
 //缓存核心类
 public class Cache<K,V> implements ICache<K,V> {
 
-
     //初始化
     public void init() {
+        //加载数据结构
+        this.sValue = new StringValue();
+        this.listValue = new ListValue();
+        this.hashValue = new HashValue();
+        this.setValue = new SetValue();
+        this.zsetValue = new ZSetValue();
         //设置过期策略
         this.expire = new CacheExpire<>(this);
         this.load.load(this);
@@ -31,6 +37,26 @@ public class Cache<K,V> implements ICache<K,V> {
         if(this.persist != null) {
             new InnerCachePersist<>(this, persist);
         }
+    }
+
+    public Value opsForString(){
+        return sValue;
+    }
+
+    public Value opsForList(){
+        return listValue;
+    }
+
+    public Value opsForHash(){
+        return hashValue;
+    }
+
+    public Value opsForSet(){
+        return setValue;
+    }
+
+    public Value opsForZset(){
+        return zsetValue;
     }
 
 
@@ -194,6 +220,11 @@ public class Cache<K,V> implements ICache<K,V> {
     private List<ICacheSlowListener> slowListeners;
     private ICacheLoad<K,V> load;
     private ICachePersist<K,V> persist;
+    private StringValue sValue;
+    private ListValue listValue;
+    private HashValue hashValue;
+    private SetValue setValue;
+    private ZSetValue zsetValue;
 
     //自定义配置
     public Cache<K, V> map(Map<K, V> map) {

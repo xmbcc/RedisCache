@@ -2,7 +2,19 @@ package core.KV.Values;
 
 import core.KV.Key;
 
+import java.util.Map;
+
 public class ZSetValue implements Value {
+
+    private Map<Key,Object> map;
+
+    public ZSetValue() {
+    }
+
+    public ZSetValue(Map m) {
+        this.map = m;
+    }
+
     @Override
     public <V> V get(Key key) {
         return null;

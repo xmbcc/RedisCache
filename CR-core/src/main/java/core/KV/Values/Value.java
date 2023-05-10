@@ -1,6 +1,7 @@
 package core.KV.Values;
 
 import core.KV.Key;
+import core.core.exception.CRRunTimeException;
 
 /**
  * 数据类型顶层接口，实现接口创造数据类型
@@ -9,14 +10,14 @@ import core.KV.Key;
  */
 public interface Value {
 
-    <V> V get(Key key);
+    <V> V get(Key key) throws CRRunTimeException;
 
-    Boolean set(Object key,Object value);
+    Boolean set(Key key,Object value) throws CRRunTimeException;
 
     Boolean expire(Key key,long timeinMillons);
 
     Boolean containsKey(Key key);
 
-    <V> V remove(Key key);
+    <V> V remove(Key key) throws CRRunTimeException;
 
 }

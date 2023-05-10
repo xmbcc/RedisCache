@@ -1,5 +1,7 @@
 package core.core;
 
+import core.Context.Evict.Evict;
+import core.Context.Expire.Expire;
 import core.KV.Key;
 import core.KV.Values.*;
 import java.util.*;
@@ -17,6 +19,8 @@ public class CR {
     private StringValue sValue;
     private ListValue listValue;
     private HashValue hashValue;
+    private Evict evict;
+    private Expire expire;
     private SetValue setValue;
     private ZSetValue zsetValue;
 
@@ -31,11 +35,12 @@ public class CR {
     public void init() {
         //加载数据结构
         this.map = new HashMap<Key,Object>();
-        this.sValue = new StringValue(map);
-        this.listValue = new ListValue(map);
-        this.hashValue = new HashValue(map);
-        this.setValue = new SetValue(map);
-        this.zsetValue = new ZSetValue(map);
+        CRcontext crc = new CRcontext(evict,expire,map);
+        this.sValue = new StringValue(crc);
+        this.listValue = new ListValue(crc);
+        this.hashValue = new HashValue(crc);
+        this.setValue = new SetValue(crc);
+        this.zsetValue = new ZSetValue(crc);
         //设置过期策略
 
         // 初始化持久化

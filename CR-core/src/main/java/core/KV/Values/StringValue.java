@@ -1,11 +1,15 @@
 package core.KV.Values;
 
 import com.github.houbb.heaven.util.lang.ObjectUtil;
-import com.github.houbb.heaven.util.lang.StringUtil;
 import core.KV.Key;
+import core.core.CRcontext;
+import core.core.exception.CRRunTimeException;
+import core.core.exception.ExceptionCode;
+import core.core.util.ParameterCheck;
 
-import java.util.HashMap;
 import java.util.Map;
+
+import static core.core.exception.ExceptionCode.*;
 
 /**
  * String数据类型
@@ -14,7 +18,9 @@ import java.util.Map;
  */
 public class StringValue implements Value{
 
-    private Map<Key,Object> map;
+    private CRcontext crc;
+
+    private Map<Object,Object> map;
 
     /**
      * 空参
@@ -24,32 +30,64 @@ public class StringValue implements Value{
 
     /**
      * 带参
-     * @param m
+     * @param crc
      */
-    public StringValue(Map m) {
-        this.map = m;
+    public StringValue(CRcontext crc) {
+        this.crc = crc;
+        this.map = crc.getMap();
     }
 
+    /**
+     * get方法
+     * @param key
+     * @return
+     * @param <V>
+     * @throws CRRunTimeException
+     */
     @Override
-    public <V> V get(Key key) {
-        //判断
-        if( key == null || ObjectUtil.isNull(key) || StringUtil.isBlank(key.toString()) ){
-            throw new RuntimeException();
+    public <V> V get(Key key) throws CRRunTimeException {
+        //参数校验
+        if( !ParameterCheck.pc(key) ){
+            //error：key格式错误
+            throw new CRRunTimeException(KEY_FORMAT_ERROR);
         }
-        //是否超时
-
-        //查找
-        if( map.get(key) == null || ObjectUtil.isNull(map.get(key)) ){
-            throw new RuntimeException();
+        //判断Key是否存在
+        if(!map.containsKey(key))
+            //error：key不存在
+            throw new CRRunTimeException(KEY_NOTFIND_ERROR);
+        //超时、策略逻辑
+        dosomething();
+        //查找并校验value
+        if( !ParameterCheck.pc(map.get(key)) ){
+            //error：value格式错误
+            throw new CRRunTimeException(VALUE_FORMAT_ERROR);
         }
 
         return (V) map.get(key);
     }
 
+    /**
+     * set方法
+     * @param key
+     * @param value
+     * @return
+     */
     @Override
-    public Boolean set(Object key, Object value) {
-        return null;
+    public Boolean set(Key key, Object value) throws CRRunTimeException {
+        //参数校验
+        if(!ParameterCheck.pc(key,value)) throw new CRRunTimeException(KEY_VALUE_FORMAT_ERROR);
+        //判断key是否存在
+        if(!containsKey(key)) throw new CRRunTimeException(KEY_NOTFIND_ERROR);
+        //开始存入，判断是否触发容量限制
+        map.put(key,value);
+        //封装方法：超过限制/未超过
+        dosomething();
+        return true;
     }
+
+    private void dosomething() {
+    }
+
 
     @Override
     public Boolean expire(Key key, long timeinMillons) {
@@ -58,11 +96,19 @@ public class StringValue implements Value{
 
     @Override
     public Boolean containsKey(Key key) {
-        return null;
+        if(map.containsKey(key)) return true;
+        return false;
     }
 
     @Override
-    public <V> V remove(Key key) {
-        return null;
+    public Object remove(Key key) throws CRRunTimeException {
+        //判断传入参数是否符合格式
+        if(!ParameterCheck.pc(key)) throw new CRRunTimeException(KEY_FORMAT_ERROR);
+        //判断Key是否存在
+        if(!containsKey(key)) throw new CRRunTimeException(KEY_NOTFIND_ERROR);
+        //dosomething
+
+        //删除Key
+        return map.remove(key);
     }
 }

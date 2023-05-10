@@ -1,18 +1,22 @@
 package core.KV.Values;
 
 import core.KV.Key;
+import core.core.CRcontext;
 
 import java.util.Map;
 
 public class ZSetValue implements Value {
 
-    private Map<Key,Object> map;
+    private Map<Object,Object> map;
+
+    private CRcontext crc;
 
     public ZSetValue() {
     }
 
-    public ZSetValue(Map m) {
-        this.map = m;
+    public ZSetValue(CRcontext crc) {
+        this.crc = crc;
+        this.map = crc.getMap();
     }
 
     @Override
@@ -21,7 +25,7 @@ public class ZSetValue implements Value {
     }
 
     @Override
-    public Boolean set(Object key, Object value) {
+    public Boolean set(Key key, Object value) {
         return null;
     }
 

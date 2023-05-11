@@ -81,7 +81,8 @@ public class StringValue implements Value{
         //开始存入，判断是否触发容量限制
         map.put(key,value);
         //封装方法：超过限制/未超过
-        dosomething();
+        //淘汰
+        crc.getEvict().doEvict(key,value,crc);
         return true;
     }
 

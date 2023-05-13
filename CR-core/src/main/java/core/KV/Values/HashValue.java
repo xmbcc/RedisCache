@@ -30,8 +30,8 @@ public class HashValue implements Value {
     }
 
     @Override
-    public Boolean expire(Key key, long timeinMillons) {
-        return null;
+    public void expire(Key key, long timeinMillons) {
+
     }
 
     @Override

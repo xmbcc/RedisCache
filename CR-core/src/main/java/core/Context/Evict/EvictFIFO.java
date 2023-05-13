@@ -1,7 +1,6 @@
 package core.Context.Evict;
 
 import core.KV.Key;
-import core.KV.Values.Value;
 import core.core.CRcontext;
 
 import java.util.LinkedList;

@@ -57,4 +57,23 @@ public class EvictLFU implements Evict{
 
     }
 
+    /**
+     * 频次自增操作
+     * @param key
+     * @param value
+     */
+    public void doIncrease(Key key,Object value) {
+
+        //自增操作
+        KeyValueNode node = new KeyValueNode(key, value);
+        for(int i=0;i<map.size();i++){
+            LinkedHashSet<KeyValueNode> set = map.get(i);
+            if(set.contains(node)){
+                set.remove(node);
+                //获取下一个频次，没有就创建
+                map.getOrDefault(i+1,new LinkedHashSet<>()).add(node);
+            }
+        }
+
+    }
 }

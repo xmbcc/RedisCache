@@ -14,7 +14,7 @@ public interface Value {
 
     Boolean set(Key key,Object value) throws CRRunTimeException;
 
-    Boolean expire(Key key,long timeinMillons);
+    void expire(Key key,long timeinMillons);
 
     Boolean containsKey(Key key);
 

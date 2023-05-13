@@ -14,6 +14,7 @@ public class Key implements Comparable<Key> {
 
     static final Charset charset = StandardCharsets.UTF_8;
     private final byte[] content;
+    private long expireSeconds;
 
     /**
      * 构造函数
@@ -23,6 +24,16 @@ public class Key implements Comparable<Key> {
         this.content = bytes;
     }
 
+    /**
+     * 过期构造
+     *
+     * @param bytes
+     * @param expireSeconds
+     */
+    public Key(byte[] bytes, long expireSeconds){
+        this.content = bytes;
+        this.expireSeconds = expireSeconds;
+    }
     /**
      * 重写hashcode
      * @return

@@ -2,14 +2,19 @@ package core.core.util;
 
 import com.github.houbb.heaven.util.lang.ObjectUtil;
 import com.github.houbb.heaven.util.lang.StringUtil;
+import core.Context.Evict.Evict;
+import core.Context.Evict.EvictLFU;
 import core.KV.Key;
+import core.core.CRcontext;
+
+import java.util.Map;
 
 /**
  * 参数校验工具类
  * @author lujiaxin
  * @date 2023/5/10
  */
-public class ParameterCheck {
+public class GlobalUtils {
 
     /**
      * 单个参数校验
@@ -35,6 +40,21 @@ public class ParameterCheck {
             return false;
         }
         return true;
+    }
+
+    /**
+     * 封装自增代码
+     * @param key
+     * @param crc
+     * @param map
+     */
+    public static void doIncrease(Key key, CRcontext crc, Map map){
+
+        if(crc.getEvict().getClass().equals(EvictLFU.class)){
+            EvictLFU evict = (EvictLFU) crc.getEvict();
+            evict.doIncrease(key,map.get(key));
+        }
+
     }
 
 }

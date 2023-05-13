@@ -1,11 +1,11 @@
 package core.KV.Values;
 
-import com.github.houbb.heaven.util.lang.ObjectUtil;
+import core.Context.Evict.Evict;
+import core.Context.Evict.EvictLFU;
 import core.KV.Key;
 import core.core.CRcontext;
 import core.core.exception.CRRunTimeException;
-import core.core.exception.ExceptionCode;
-import core.core.util.ParameterCheck;
+import core.core.util.GlobalUtils;
 
 import java.util.Map;
 
@@ -47,7 +47,7 @@ public class StringValue implements Value{
     @Override
     public <V> V get(Key key) throws CRRunTimeException {
         //参数校验
-        if( !ParameterCheck.pc(key) ){
+        if( !GlobalUtils.pc(key) ){
             //error：key格式错误
             throw new CRRunTimeException(KEY_FORMAT_ERROR);
         }
@@ -56,9 +56,10 @@ public class StringValue implements Value{
             //error：key不存在
             throw new CRRunTimeException(KEY_NOTFIND_ERROR);
         //超时、策略逻辑
-        dosomething();
+        //LFU 自增操作
+        GlobalUtils.doIncrease(key,crc,map);
         //查找并校验value
-        if( !ParameterCheck.pc(map.get(key)) ){
+        if( !GlobalUtils.pc(map.get(key)) ){
             //error：value格式错误
             throw new CRRunTimeException(VALUE_FORMAT_ERROR);
         }
@@ -75,7 +76,7 @@ public class StringValue implements Value{
     @Override
     public Boolean set(Key key, Object value) throws CRRunTimeException {
         //参数校验
-        if(!ParameterCheck.pc(key,value)) throw new CRRunTimeException(KEY_VALUE_FORMAT_ERROR);
+        if(!GlobalUtils.pc(key,value)) throw new CRRunTimeException(KEY_VALUE_FORMAT_ERROR);
         //判断key是否存在
         if(!containsKey(key)) throw new CRRunTimeException(KEY_NOTFIND_ERROR);
         //开始存入，判断是否触发容量限制
@@ -90,9 +91,23 @@ public class StringValue implements Value{
     }
 
 
+    /**
+     * 给Key设置过期时间
+     * @param key
+     * @param timeinMillons
+     * @return
+     */
     @Override
-    public Boolean expire(Key key, long timeinMillons) {
-        return null;
+    public void expire(Key key, long timeinMillons) {
+
+        //创建key，附加时间
+        long time = System.currentTimeMillis() + timeinMillons;
+        Key k = new Key(key.toString().getBytes(),time);
+        //触发使用频次++
+        GlobalUtils.doIncrease(key,crc,map);
+        //塞入
+        map.put(key,map.get(key));
+
     }
 
     @Override
@@ -104,7 +119,7 @@ public class StringValue implements Value{
     @Override
     public Object remove(Key key) throws CRRunTimeException {
         //判断传入参数是否符合格式
-        if(!ParameterCheck.pc(key)) throw new CRRunTimeException(KEY_FORMAT_ERROR);
+        if(!GlobalUtils.pc(key)) throw new CRRunTimeException(KEY_FORMAT_ERROR);
         //判断Key是否存在
         if(!containsKey(key)) throw new CRRunTimeException(KEY_NOTFIND_ERROR);
         //dosomething

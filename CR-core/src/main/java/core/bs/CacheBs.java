@@ -32,6 +32,7 @@ import java.util.Map;
  */
 public final class CacheBs<K,V> {
 //aaa
+ bbb    //bbb
 
     //默认设置
     private Map<K,V> map = new HashMap<>();

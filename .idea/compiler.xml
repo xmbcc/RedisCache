@@ -17,8 +17,8 @@
   </component>
   <component name="JavacSettings">
     <option name="ADDITIONAL_OPTIONS_OVERRIDE">
-      <module name="CR-api" options="--add-modules java.base" />
-      <module name="CR-core" options="--add-modules java.base" />
+      <module name="CR-api" options="" />
+      <module name="CR-core" options="" />
     </option>
   </component>
 </project>
